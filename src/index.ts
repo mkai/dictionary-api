@@ -3,7 +3,9 @@ import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
+import { Language } from './entities/Language';
 import { Word } from './entities/Word';
+import { Translation } from './entities/Translation';
 import { PORT, DATABASE_URL } from './constants';
 import { WordResolver } from './resolvers/word';
 
@@ -12,8 +14,8 @@ async function main() {
     type: 'postgres',
     url: DATABASE_URL,
     logging: true,
-    entities: [Word],
     synchronize: false,
+    entities: [Language, Word, Translation],
   });
   const app = express();
   const server = new ApolloServer({

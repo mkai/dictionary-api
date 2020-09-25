@@ -2,32 +2,31 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   BaseEntity,
+  Unique,
+  ManyToOne,
+  Index,
 } from 'typeorm';
 import { ObjectType, Field } from 'type-graphql';
+import { Language } from './Language';
 
 @ObjectType()
 @Entity()
+@Unique(['languageId', 'text'])
 export class Word extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Field()
-  @CreateDateColumn()
-  createdAt: Date;
+  @Index()
+  @Column('text')
+  text: string;
+
+  @Column('uuid', { name: 'language_id' })
+  languageId: string;
 
   @Field()
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Field()
-  @Column()
-  en: string;
-
-  @Field()
-  @Column()
-  de: string;
+  @ManyToOne(() => Language)
+  language: Language;
 }
