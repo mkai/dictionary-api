@@ -50,14 +50,47 @@ const LOOKUP_QUERY = `
   limit $4 -- 4: max results
 `;
 
+interface TranslationResultRow {
+  word: string;
+  language: string;
+  translation: string;
+  translation_language: string;
+}
+
 async function lookupTranslations(
   fromLanguage: string,
   toLanguage: string,
   searchString: string,
   maxResults = 20
-): Promise<any[]> {
+): Promise<TranslationResultRow[]> {
   const params = [fromLanguage, toLanguage, searchString, maxResults];
   return getConnection().query(LOOKUP_QUERY, params);
+}
+
+function makeLookupResult(result: TranslationResultRow): LookupResult {
+  const word = new Word();
+  Object.assign(word, {
+    id: 'id',
+    text: result.word,
+    languageId: '1',
+    language: {
+      id: 'id',
+      code: result.language,
+    },
+  });
+
+  const translatedWord = new Word();
+  Object.assign(translatedWord, {
+    id: 'id',
+    text: result.translation,
+    languageId: '1',
+    language: {
+      id: 'id',
+      code: result.translation_language,
+    },
+  });
+
+  return { word, translatedWord };
 }
 
 @InputType()
@@ -85,32 +118,6 @@ class LookupResult {
 
   @Field()
   translatedWord: Word;
-}
-
-function makeLookupResult(result: any) {
-  const word = new Word();
-  Object.assign(word, {
-    id: 'id',
-    text: result.word,
-    languageId: '1',
-    language: {
-      id: 'id',
-      code: result.language,
-    },
-  });
-
-  const translatedWord = new Word();
-  Object.assign(translatedWord, {
-    id: 'id',
-    text: result.translation,
-    languageId: '1',
-    language: {
-      id: 'id',
-      code: result.translation_language,
-    },
-  });
-
-  return { word, translatedWord };
 }
 
 @Resolver(Word)
