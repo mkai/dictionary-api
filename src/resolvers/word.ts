@@ -1,4 +1,3 @@
-import { Like } from 'typeorm';
 import { Length } from 'class-validator';
 import { Resolver, Query, InputType, Field, Arg, ObjectType } from 'type-graphql';
 import { Word } from '../entities/Word';
@@ -19,23 +18,43 @@ class LookupInput {
 }
 
 @ObjectType()
-class LookupResponse {
+class LookupResult {
   @Field()
-  query: string;
+  word: Word;
 
-  @Field(() => [Word])
-  results: Word[];
+  @Field()
+  translatedWord: Word;
 }
 
 @Resolver(Word)
 export class WordResolver {
-  @Query(() => LookupResponse)
-  async lookup(@Arg('input') lookupInput: LookupInput): Promise<LookupResponse> {
-    const { inputLanguage, query } = lookupInput;
-    const results = await Word.find({
-      [inputLanguage]: Like(`${query}%`),
+  @Query(() => [LookupResult])
+  async lookup(@Arg('input') lookupInput: LookupInput): Promise<LookupResult[]> {
+    const { fromLanguage, toLanguage, searchString } = lookupInput;
+    console.log(fromLanguage, toLanguage, searchString);
+
+    const word = new Word();
+    Object.assign(word, {
+      id: 'id',
+      text: 'cabinet',
+      languageId: '1',
+      language: {
+        id: 'id',
+        code: 'eng',
+      },
     });
 
-    return { query, results };
+    const translatedWord = new Word();
+    Object.assign(translatedWord, {
+      id: 'id',
+      text: 'Schrank',
+      languageId: '2',
+      language: {
+        id: 'id',
+        code: 'deu',
+      },
+    });
+
+    return [{ word, translatedWord }];
   }
 }
