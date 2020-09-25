@@ -6,11 +6,22 @@ Dictionary GraphQL API.
 
 ```graphql
 {
-  lookup(input: { query: "yell", inputLanguage: "en" }) {
-    query
-    results {
-      en
-      de
+  lookup(input: { fromLanguage: "eng", toLanguage: "deu", searchString: "honey" }) {
+    word {
+      id
+      text
+      language {
+        id
+        code
+      }
+    }
+    translatedWord {
+      id
+      text
+      language {
+        id
+        code
+      }
     }
   }
 }
@@ -21,19 +32,26 @@ Result:
 ```json
 {
   "data": {
-    "lookup": {
-      "query": "yell",
-      "results": [
-        {
-          "en": "yell",
-          "de": "schreien"
+    "lookup": [
+      {
+        "word": {
+          "id": "08620a66630843a6a6393072ea4d1937",
+          "text": "honey",
+          "language": {
+            "id": "7647ebb0aed54f5bb70a9341f57ee319",
+            "code": "eng"
+          }
         },
-        {
-          "en": "yellow",
-          "de": "gelb"
+        "translatedWord": {
+          "id": "2aa10cdb69b642919cfb88a941a7c592",
+          "text": "Honig {m}",
+          "language": {
+            "id": "fba6098fb4b84262a820eab5fedc35f8",
+            "code": "deu"
+          }
         }
-      ]
-    }
+      }
+    ]
   }
 }
 ```
