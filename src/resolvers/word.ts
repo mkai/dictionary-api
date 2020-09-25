@@ -7,11 +7,15 @@ import { Word } from '../entities/Word';
 class LookupInput {
   @Field()
   @Length(2, 100)
-  query: string;
+  searchString: string;
 
   @Field()
-  @Length(2)
-  inputLanguage: string;
+  @Length(3)
+  fromLanguage: string;
+
+  @Field()
+  @Length(3)
+  toLanguage: string;
 }
 
 @ObjectType()
