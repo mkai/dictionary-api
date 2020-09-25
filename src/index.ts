@@ -12,8 +12,8 @@ async function main() {
     type: 'postgres',
     url: DATABASE_URL,
     logging: true,
-    synchronize: true,
     entities: [Word],
+    synchronize: false,
   });
   const app = express();
   const server = new ApolloServer({
